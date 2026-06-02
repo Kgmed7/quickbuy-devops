@@ -1,6 +1,5 @@
  <?php
-
-$serverename = "localhost";
+$serverename = "db";
 $username = "root";
 $password = "KHALI@med2000"; 
 $dbname = "e-commerce";
@@ -11,4 +10,3 @@ if (!$database) {
     exit('failed to connect to the database: ' . mysqli_connect_error());
 }
 
-?>

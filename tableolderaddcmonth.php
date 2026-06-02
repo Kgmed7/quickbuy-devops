@@ -109,7 +109,7 @@ tr:hover {
 <?php
 
 $servername = "localhost";
-$username = "root";
+$username = "db";
 $password = "KHALI@med2000";
 $dbname = "e-commerce";
 

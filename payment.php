@@ -396,7 +396,7 @@
     <?php
 
 // Retrieve the product details from the database using the product ID
-$servername = "localhost";
+$servername = "db";
 $username = "root";
 $password = "KHALI@med2000";
 $dbname = "e-commerce";
@@ -477,7 +477,8 @@ if (isset($_POST['submit'])) {
         $currency_code = $_POST['currency_code'];
         // Remove any non-numeric characters and keep only the decimal value
         $product_price = preg_replace('/[^0-9.]/', '', $product_price);
-
+        $product_price = floatval($product_price);
+        
         // Insert customer and product info into the database
         $order_date = date("Y-m-d H:i:s");
         $modified_order_date = date("Y-m-d H:i:s", strtotime("+1 hour", strtotime($order_date)));

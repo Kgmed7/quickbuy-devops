@@ -108,7 +108,7 @@ tr:hover {
   </div>
 <?php
 
-$servername = "localhost";
+$servername = "db";
 $username = "root";
 $password = "KHALI@med2000";
 $dbname = "e-commerce";

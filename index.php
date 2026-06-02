@@ -182,7 +182,7 @@
             </div>
             <?php
 			// Retrieve the products from the database 
-			//$serverename = "localhost";
+			//$serverename = "db";
            // $username = "KHALI@med2000";
           //  $password = "KHALI@med2000";
            // $dbname = "e-commerce";
@@ -228,7 +228,7 @@
         <div class="products-container">
         <?php
     // Retrieve the products from the database
-    $servername = "localhost";
+    $servername = "db";
     $username = "root";
     $password = "KHALI@med2000";
     $dbname = "e-commerce";
@@ -309,7 +309,7 @@
         <div class="products-container">
         <?php
             // Retrieve the products from the database
-            $servername = "localhost";
+            $servername = "db";
             $username = "root";
             $password = "KHALI@med2000";
             $dbname = "e-commerce";
@@ -388,7 +388,7 @@
         <div class="products-container">
         <?php
             // Retrieve the products from the database
-            $servername = "localhost";
+            $servername = "db";
             $username = "root";
             $password = "KHALI@med2000";
             $dbname = "e-commerce";
@@ -472,7 +472,7 @@
         <div class="products-container">
         <?php
             // Retrieve the products from the database
-            $servername = "localhost";
+            $servername = "db";
             $username = "root";
             $password = "KHALI@med2000";
             $dbname = "e-commerce";
@@ -555,7 +555,7 @@
         <div class="products-container">
         <?php
             // Retrieve the products from the database
-            $servername = "localhost";
+            $servername = "db";
             $username = "root";
             $password = "KHALI@med2000";
             $dbname = "e-commerce";

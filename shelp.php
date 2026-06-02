@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$serverename = "localhost";
+$serverename = "db";
 $username = "root";
 $password = "KHALI@med2000";
 $dbname = "e-commerce";

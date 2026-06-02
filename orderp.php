@@ -1,75 +1,73 @@
-
 <?php
-/*
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-ob_start(); // Turn on output buffering
-*/
+ob_start();
 
-
-$servername = "localhost";
+$servername = "db";
 $username = "root";
 $password = "KHALI@med2000";
 $dbname = "e-commerce";
+
 $database = mysqli_connect($servername, $username, $password, $dbname);
 
-if (mysqli_connect_error()) {
-  exit('Failed to connect to the database: ' . mysqli_connect_errno());
+if (!$database) {
+    die('Failed to connect to the database: ' . mysqli_connect_error());
 }
 
-// Insert the customer data into the database
-$name = mysqli_real_escape_string($database, $_POST['name']);
+if (
+    empty($_POST['name']) ||
+    empty($_POST['email']) ||
+    empty($_POST['telephone']) ||
+    empty($_POST['city']) ||
+    empty($_POST['items'])
+) {
+    die("Missing form data or cart items.");
+}
+
+$customer_name = mysqli_real_escape_string($database, $_POST['name']);
 $email = mysqli_real_escape_string($database, $_POST['email']);
 $telephone = mysqli_real_escape_string($database, $_POST['telephone']);
 $city = mysqli_real_escape_string($database, $_POST['city']);
 
-$customer_query = "INSERT INTO customers (name, email, telephone, city) VALUES ('$name', '$email', '$telephone', '$city')";
-$customer_result = mysqli_query($database, $customer_query);
-
-if (!$customer_result) {
-  echo 'Error inserting customer data: ' . mysqli_error($database);
-  exit();
-}
-
-// Get the last inserted customer ID
-$customer_id = mysqli_insert_id($database);
-
-// Insert the product data into the database
 $cartItems = json_decode($_POST['items'], true);
 
-foreach ($cartItems as $item) {
-  $name = mysqli_real_escape_string($database, $item['name']);
-  $price = (float)$item['price']; // cast to float to prevent truncation
-  $incart = mysqli_real_escape_string($database, $item['inCart']);
-  
-  $product_query = "INSERT INTO orderproducts (name, price, img, in_cart, customer_id) VALUES ('$name', '$price', '$item[img]', '$incart', '$customer_id')";
-  $product_result = mysqli_query($database, $product_query);
-  
-  if (!$product_result) {
-    echo 'Error inserting product data: ' . mysqli_error($database);
-    exit();
-  }
+if (!is_array($cartItems) || count($cartItems) == 0) {
+    die("Cart items are empty or invalid.");
 }
 
-// Send an email with the customer and product data
-$to = "medquickbuy7@gmail.com";
-$subject = "New Order";
-$message = "Customer Name: $name\nEmail: $email\nTelephone: $telephone\nCity: $city\n\n";
-$message .= "Products:\n";
+$customer_query = "INSERT INTO customers (name, email, telephone, city)
+VALUES ('$customer_name', '$email', '$telephone', '$city')";
 
-foreach ($cartItems as $item) {
-  $message .= "Name: $item[name]\nPrice: $item[price]\nImage: $item[img]\nIn Cart: $item[inCart]\n\n";
+if (!mysqli_query($database, $customer_query)) {
+    die('Error inserting customer data: ' . mysqli_error($database));
 }
 
-$headers = "From: medquickbuy7@gmail.com\r\n";
-$headers .= "Reply-To: $email\r\n";
+$customer_id = mysqli_insert_id($database);
+$order_date = date("Y-m-d H:i:s");
 
-mail($to, $subject, $message, $headers);
+foreach ($cartItems as $item) {
 
-// Close the database connection
+    $product_name = mysqli_real_escape_string($database, $item['name'] ?? '');
+    $product_img = mysqli_real_escape_string($database, $item['img'] ?? '');
+    $incart = intval($item['inCart'] ?? 1);
+
+    $price = $item['price'] ?? 0;
+    $price = preg_replace('/[^0-9.]/', '', $price);
+    $price = floatval($price);
+
+    if ($product_name == '' || $price <= 0) {
+        continue;
+    }
+
+    $product_query = "INSERT INTO orderproducts 
+    (name, price, img, in_cart, customer_id, order_date)
+    VALUES 
+    ('$product_name', '$price', '$product_img', '$incart', '$customer_id', '$order_date')";
+
+    if (!mysqli_query($database, $product_query)) {
+        die('Error inserting product data: ' . mysqli_error($database));
+    }
+}
+
 mysqli_close($database);
-// Redirect user to thank you page
+
 header('Location: thankyou.php');
 exit();
-?>

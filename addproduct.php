@@ -149,7 +149,7 @@ if (!empty($_FILES['image']['name'][0])) {
 $image = implode(',', $images);
 
     // save the product information to a database
-    $servername = "localhost";
+    $servername = "db";
     $username = "root";
     $password = "KHALI@med2000";
     $dbname = "e-commerce";

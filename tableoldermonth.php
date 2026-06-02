@@ -103,7 +103,7 @@ tr:hover {
     <a href="index.php" class="logo"><i class='bx bx-pointer bx-rotate-90' ></i><b>QuickBuy</b></a>
   </div>
   <?php
-$servername = "localhost";
+$servername = "db";
 $username = "root";
 $password = "KHALI@med2000";
 $dbname = "e-commerce";

@@ -1,57 +1,52 @@
 <?php
+ob_start();
 session_start();
-
 require_once 'config.php';
 
-if (mysqli_connect_error()) {
-    exit('failed to connect to the database :' . mysqli_connect_errno());
-}
+if (isset($_POST['email']) && isset($_POST['password'])) {
 
-// prepare oure sql statement  and prevent injection 
+    $email = $_POST['email'];
+    $pass = $_POST['password'];
 
-if ($prev=$database->prepare('SELECT ID, PASSWORD FROM client WHERE EMAIL = ?')) {
-    // now let we bind the parameters, son user name is a string so we use "S"
-    $prev->bind_param('s', $_POST['email']);
-    $prev->execute();
+    $stmt = $database->prepare("SELECT ID, PASSWORD, Accept FROM client WHERE EMAIL = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
 
-    // now let we store the result so we can check if the account exists
-    $prev->store_result();
+    if ($stmt->num_rows > 0) {
 
-    if ($prev->num_rows() > 0) {
-        $prev->bind_result($id, $password);
-        $prev->fetch();
+        $stmt->bind_result($id, $db_password, $accept);
+        $stmt->fetch();
 
-        // so now we know the account existand verify password
+        if ($pass === $db_password) {
 
-        if ($_POST['password'] === $password) {
-            // now the user should log in and we create a session so we know the user has loggeding 
-            session_regenerate_id();
+            session_regenerate_id(true);
+
             $_SESSION['loggedin'] = true;
-            $_SESSION['name'] = $_POST['email'];
+            $_SESSION['name'] = $email;
             $_SESSION['id'] = $id;
-            // check if Accept column in the client table is 1
-            $stmt = $database->prepare('SELECT Accept FROM client WHERE ID = ?');
-            $stmt->bind_param('i', $id);
-            $stmt->execute();
-            $stmt->bind_result($accept);
-            $stmt->fetch();
-            $stmt->close();
-            // if Accept is 1, redirect to enterccot.html, else redirect to welcom.html
+
             if ($accept == 1) {
-                header('Location: enterccot.html');
+                header("Location: enterccot.html");
+                exit();
             } else {
-                header('Location: welcom.php');
+                header("Location: welcom.php");
+                exit();
             }
+
         } else {
-            // display a message for incorrect password
-            echo "incorrect password";
-            header('refresh:2;url=sign.html');
-        } 
+            header("Location: sign.html");
+            exit();
+        }
+
     } else {
-        // display a message for incorrect
-        echo "incorrect email ";
-        header('refresh:2;url=sign.html');
+        header("Location: sign.html");
+        exit();
     }
-    $prev->close();
+
+    $stmt->close();
+
+} else {
+    header("Location: sign.html");
+    exit();
 }
-?>
